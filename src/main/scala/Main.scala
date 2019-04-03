@@ -13,6 +13,7 @@ object Main {
         trySimulate match {
             case Failure(throwable) =>
                 println(s"Failure occurred.")
+                simulate
                 System.exit(-1);
             case _ =>
         }
@@ -27,7 +28,11 @@ object Main {
     private def simulate:Unit = {
         val sc = new java.util.Scanner(System.in)
         println("Please type number of elevators in building (max 16): ")
-        val numberOfElevators = sc.nextInt()
+        var numberOfElevators = sc.nextInt()
+        while(numberOfElevators > 16){
+            println("I'm sorry, maximum number of elevators is 16")
+            numberOfElevators = sc.nextInt()
+        }
 
         println("Please type number of floors in the building: ")
         val numberOfFloors = sc.nextInt()
@@ -49,11 +54,15 @@ object Main {
                 case "step" => elevatorSystem.step()
                 case "pickup" =>
                     val pickupFloor = sc.nextInt
-
                     val direction = Direction(sc.nextInt())
 
-                    val pickupRequest = PickupRequest(pickupFloor, direction)
-                    elevatorSystem.pickup(pickupRequest)
+                    if(pickupFloor <= numberOfFloors) {
+                        val pickupRequest = PickupRequest(pickupFloor, direction)
+                        elevatorSystem.pickup(pickupRequest)
+                    }
+
+                    else println(s"I'm sorry, but building has only ${numberOfFloors} floors")
+
                 case "exit" =>
                     System.exit(0)
                 case _ =>

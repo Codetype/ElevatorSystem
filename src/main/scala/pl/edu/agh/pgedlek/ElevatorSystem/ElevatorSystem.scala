@@ -33,25 +33,11 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
   override def pickup(pickupRequest: PickupRequest): Unit = {
     requestQueue.enqueue(pickupRequest)
   }
-
-  /*override def step(): Unit = {
-    elevators.foreach { elevator =>
-      val maybePickupRequest = requestQueue.dequeue()
-      maybePickupRequest match {
-        case Some(pickupRequest) =>
-          update(elevator, pickupRequest.currFloor)
-        case _ if elevator.goalFloorNumbers.isEmpty =>
-        case _ =>
-          val nextGoalFloor = elevator.goalFloorNumbers.headOption.getOrElse(elevator.floorNumber)
-          update(elevator, nextGoalFloor)
-      }
-    }
-  }*/
-
+  
   override def step(): Unit = {
     if(requestQueue.queue.nonEmpty) {
       val pickupRequestMaybe = requestQueue.dequeue()
-      chooseElevator(pickupRequestMaybe)
+      update(chooseElevator(pickupRequestMaybe), pickupRequestMaybe.head.destFloor, pickupRequestMaybe.head.direction )
     }
     else elevators.foreach(
       elevator =>
@@ -62,7 +48,7 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
       )
   }
 
-  def chooseElevator(pickupRequestMaybe: Option[PickupRequest]): Unit = {
+  def chooseElevator(pickupRequestMaybe: Option[PickupRequest]): Elevator = {
     val emptyElevator =
       elevators
         .filter(_.goalFloorNumbers.isEmpty)
@@ -76,16 +62,18 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
         .headOption
 
     val destFloor = pickupRequestMaybe.head.destFloor
+    val emptyIdent = Elevator
 
-    (emptyElevator, movingElevator) match {
-      case (None, Some(movingElevator)) => update(movingElevator, destFloor, movingElevator.checkDirection(destFloor))
-      case (Some(emptyElevator), None) => update(emptyElevator, destFloor, emptyElevator.checkDirection(destFloor))
-      case (Some(emptyElevator), Some(movingElevator)) =>
-        if (movingElevator.distanceToFloor(pickupRequestMaybe.head) <= emptyElevator.distanceToFloor(pickupRequestMaybe.head))
-          update(movingElevator, destFloor, movingElevator.checkDirection(destFloor))
-        else
-          update(emptyElevator, destFloor, emptyElevator.checkDirection(destFloor))
-    }
-
+    if(movingElevator.isDefined && emptyElevator.isDefined)
+      if (movingElevator.head.distanceToFloor(pickupRequestMaybe.head) <= emptyElevator.head.distanceToFloor(pickupRequestMaybe.head))
+        movingElevator.head
+      else
+        emptyElevator.head
+    else if (movingElevator.isEmpty && emptyElevator.isDefined)
+      emptyElevator.head
+    else if (movingElevator.isDefined && emptyElevator.isEmpty)
+      movingElevator.head
+    else
+      elevators.head
   }
 }

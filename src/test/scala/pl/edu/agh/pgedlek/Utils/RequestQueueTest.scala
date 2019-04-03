@@ -1,11 +1,10 @@
-package pl.edu.agh.pgedlek.ControlSystem
+package pl.edu.agh.pgedlek.Utils
 
 import org.scalatest.WordSpec
 import org.scalatest.Matchers
 import org.scalatest.mockito.MockitoSugar
 import org.mockito.Mockito._
 import org.scalatest.concurrent.Eventually
-import pl.edu.agh.pgedlek.Utils.{DOWN, PickupRequest, RequestQueue}
 
 import scala.collection.immutable.Queue
 
