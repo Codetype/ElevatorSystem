@@ -41,7 +41,7 @@ case class Elevator(elevatorId: Int, currFloor: Int, direction: Direction, goalF
   }
 
   def isTheSameDirection(requestFloor: PickupRequest) : Boolean = {
-    requestFloor.direction == direction
+    checkDirection(requestFloor.destFloor) == direction
   }
 }
 

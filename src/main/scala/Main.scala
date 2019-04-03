@@ -14,7 +14,7 @@ object Main {
             case Failure(throwable) =>
                 println(s"Failure occurred.")
                 simulate
-                System.exit(-1);
+
             case _ =>
         }
     }

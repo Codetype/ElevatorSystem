@@ -33,7 +33,7 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
   override def pickup(pickupRequest: PickupRequest): Unit = {
     requestQueue.enqueue(pickupRequest)
   }
-  
+
   override def step(): Unit = {
     if(requestQueue.queue.nonEmpty) {
       val pickupRequestMaybe = requestQueue.dequeue()
@@ -57,7 +57,7 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
 
     val movingElevator =
       elevators
-        .filter(_.direction.eq(pickupRequestMaybe.head.direction))
+        .filter(_.isTheSameDirection(pickupRequestMaybe.head))
         .sortBy(_.distanceToFloor(pickupRequestMaybe.head))
         .headOption
 
