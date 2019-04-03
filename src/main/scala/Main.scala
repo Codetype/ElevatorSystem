@@ -1,6 +1,5 @@
-import pl.edu.agh.pgedlek.ControlSystem.RequestQueue
 import pl.edu.agh.pgedlek.ElevatorSystem.ElevatorSystem
-import pl.edu.agh.pgedlek.Utils.{Direction, PickupRequest}
+import pl.edu.agh.pgedlek.Utils.{Direction, PickupRequest, RequestQueue}
 
 import scala.collection.immutable.Queue
 import scala.util.{Failure, Try}
@@ -46,7 +45,7 @@ object Main {
 
             option match {
                 case "status" =>
-                    ElevatorSystem.printElevatorStates(elevatorSystem.status())
+                    ElevatorSystem.getAllElevators(elevatorSystem.status())
                 case "step" => elevatorSystem.step()
                 case "pickup" =>
                     val pickupFloor = sc.nextInt

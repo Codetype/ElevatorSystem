@@ -1,7 +1,18 @@
 package pl.edu.agh.pgedlek.ElevatorSystem
 
-import pl.edu.agh.pgedlek.Utils.{Direction, PickupRequest, STOP}
-import pl.edu.agh.pgedlek.ControlSystem.RequestQueue
+import pl.edu.agh.pgedlek.Utils.{Direction, PickupRequest, RequestQueue, STOP}
+
+object ElevatorSystem {
+  def getAllElevators(elevators: Seq[Elevator]): Unit = {
+    println("Status:")
+    elevators.foreach { elevator =>
+      print(s"Elevator-${elevator.elevatorId} at [${elevator.currFloor}] floor. ")
+      if (elevator.goalFloorNumbers.nonEmpty)
+        println(s"Elevator is going ${elevator.direction} now.")
+      else println(s"Elevator is waiting now.")
+    }
+  }
+}
 
 class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
                     (implicit requestQueue: RequestQueue) extends IElevatorSystem {
@@ -67,8 +78,8 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
     val destFloor = pickupRequestMaybe.head.destFloor
 
     (emptyElevator, movingElevator) match {
-      case (Some(emptyElevator), None) => update(emptyElevator, destFloor, emptyElevator.checkDirection(destFloor))
       case (None, Some(movingElevator)) => update(movingElevator, destFloor, movingElevator.checkDirection(destFloor))
+      case (Some(emptyElevator), None) => update(emptyElevator, destFloor, emptyElevator.checkDirection(destFloor))
       case (Some(emptyElevator), Some(movingElevator)) =>
         if (movingElevator.distanceToFloor(pickupRequestMaybe.head) <= emptyElevator.distanceToFloor(pickupRequestMaybe.head))
           update(movingElevator, destFloor, movingElevator.checkDirection(destFloor))
@@ -76,17 +87,5 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
           update(emptyElevator, destFloor, emptyElevator.checkDirection(destFloor))
     }
 
-  }
-}
-
-object ElevatorSystem {
-  def printElevatorStates(elevators: Seq[Elevator]): Unit = {
-    println("Status:")
-    elevators.foreach { elevator =>
-      print(s"Elevator-${elevator.elevatorId} at [${elevator.currFloor}] floor. ")
-      if (elevator.goalFloorNumbers.nonEmpty)
-        println(s"Elevator is going ${elevator.direction} now.")
-      else println(s"Elevator is waiting now.")
-    }
   }
 }

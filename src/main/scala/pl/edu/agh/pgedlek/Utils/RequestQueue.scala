@@ -1,6 +1,4 @@
-package pl.edu.agh.pgedlek.ControlSystem
-
-import pl.edu.agh.pgedlek.Utils.{PickupRequest}
+package pl.edu.agh.pgedlek.Utils
 
 import scala.collection.immutable.Queue
 
