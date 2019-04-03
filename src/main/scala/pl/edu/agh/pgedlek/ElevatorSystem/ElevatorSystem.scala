@@ -61,9 +61,6 @@ class ElevatorSystem(numberOfElevators: Int, numberOfFloors: Int)
         .sortBy(_.distanceToFloor(pickupRequestMaybe.head))
         .headOption
 
-    val destFloor = pickupRequestMaybe.head.destFloor
-    val emptyIdent = Elevator
-
     if(movingElevator.isDefined && emptyElevator.isDefined)
       if (movingElevator.head.distanceToFloor(pickupRequestMaybe.head) <= emptyElevator.head.distanceToFloor(pickupRequestMaybe.head))
         movingElevator.head

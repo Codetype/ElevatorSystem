@@ -13,6 +13,7 @@ object Main {
         trySimulate match {
             case Failure(throwable) =>
                 println(s"Failure occurred.")
+                throwable.fillInStackTrace()
                 simulate
 
             case _ =>
@@ -21,11 +22,11 @@ object Main {
 
     private def build(numberOfElevators: Int, numberOfFloors: Int) = {
         val queue = Queue[PickupRequest]()
-        implicit val requestSystem = new RequestQueue(queue)
+        implicit val requestQueue = new RequestQueue(queue)
         new ElevatorSystem(numberOfElevators, numberOfFloors)
     }
 
-    private def simulate:Unit = {
+    private def simulate  = {
         val sc = new java.util.Scanner(System.in)
         println("Please type number of elevators in building (max 16): ")
         var numberOfElevators = sc.nextInt()
@@ -61,7 +62,7 @@ object Main {
                         elevatorSystem.pickup(pickupRequest)
                     }
 
-                    else println(s"I'm sorry, but building has only ${numberOfFloors} floors")
+                    else println(s"I'm sorry, but building has only $numberOfFloors floors")
 
                 case "exit" =>
                     System.exit(0)
