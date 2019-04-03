@@ -1,3 +1,5 @@
+import java.util.InputMismatchException
+
 import pl.edu.agh.pgedlek.ElevatorSystem.ElevatorSystem
 import pl.edu.agh.pgedlek.Utils.{Direction, PickupRequest, RequestQueue}
 
@@ -29,17 +31,23 @@ object Main {
     private def simulate  = {
         val sc = new java.util.Scanner(System.in)
         println("Please type number of elevators in building (max 16): ")
-        var numberOfElevators = sc.nextInt()
-        while(numberOfElevators > 16){
-            println("I'm sorry, maximum number of elevators is 16")
+        var numberOfElevators = 0
+        var numberOfFloors = 0
+        try{
             numberOfElevators = sc.nextInt()
+            while(numberOfElevators > 16){
+                println("I'm sorry, maximum number of elevators is 16")
+                numberOfElevators = sc.nextInt()
+            }
+
+            println("Please type number of floors in the building: ")
+            numberOfFloors = sc.nextInt()
         }
-
-        println("Please type number of floors in the building: ")
-        val numberOfFloors = sc.nextInt()
-
+        catch {
+            case input: InputMismatchException => handleWrongInput(input)
+        }
         println("Available options: ")
-        println("pickup <floor> [-1|1] => to send pickup request")
+        println("pickup <floor> [-1|1] => to send pickup request UP | DOWN")
         println("step => to execute step of simulation")
         println("status => to print elevator system status")
         println("exit => to end simulation")
@@ -55,21 +63,27 @@ object Main {
                 case "step" => elevatorSystem.step()
                 case "pickup" =>
                     val pickupFloor = sc.nextInt
-                    val direction = Direction(sc.nextInt())
-
-                    if(pickupFloor <= numberOfFloors) {
-                        val pickupRequest = PickupRequest(pickupFloor, direction)
-                        elevatorSystem.pickup(pickupRequest)
+                    val direction = sc.nextInt()
+                    if (!pickupFloor.isValidInt || !direction.isValidInt) {
+                        println("command pickup requires two integer arguments: <floor number> <direction>")
+                    } else {
+                        if (pickupFloor <= numberOfFloors) {
+                            val pickupRequest = PickupRequest(pickupFloor, Direction(direction))
+                            elevatorSystem.pickup(pickupRequest)
+                        }
+                        else println(s"I'm sorry, but building has only $numberOfFloors floors")
                     }
-
-                    else println(s"I'm sorry, but building has only $numberOfFloors floors")
-
                 case "exit" =>
                     System.exit(0)
                 case _ =>
                     println("Invalid operation.")
             }
         }
+    }
+
+    def handleWrongInput(value: Any): Unit = {
+        System.err.println("Permitted input value, which causes restart of the simulation")
+        simulate
     }
 
 }
